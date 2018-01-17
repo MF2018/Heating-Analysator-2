@@ -1,5 +1,5 @@
 # Heating-Analysation
-This projects helps to collect load profils of heating sytems in Germany and analyses it.
+This project helps to collect load profils of heating sytems in Germany and analyses it.
 
 In a first step severel little code-samples are craeted to
 1) Download the heating load profils
