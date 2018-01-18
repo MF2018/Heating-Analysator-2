@@ -14,9 +14,10 @@ Every errorvalue except 0 means an error
 """
 
 import urllib
-import time
 import urllib2
+import os
 import urlparse
+from posixpath import basename
 from bs4 import BeautifulSoup 
 
 
@@ -27,31 +28,43 @@ class pyxlsDownloader(object):
         
     #init function with class constants as constructor
    def __init__(self):
-       #class constants
-      self.datatype = ".xls"
       #initialising error-variable with default value
       self.error = 0
       
    #function to download a csv-file
-   #  an url and a filename are transfered to the function and the function adds a timestamp and saves the file
+   #  an url and a filename are transfered to the function
    #  it returns the filename including the path for further file-analysations and an error type
-   def _Downloader(self,url,name):
+   def _Downloader(self,url,path,name):
     
-      #timestamp to avoid data conflicts
-      timestamp = time.strftime("%Y_%m_%d_%H_%M_%S",time.gmtime())
-      filename = name + "_" + timestamp + self.datatype
-
+      
+      #if no filename is transfered, the filename of the url is used
+      if name =='':
+         #decompsing url for filename
+         decomposed_url = urlparse.urlparse(url) 
+         #extractin filename
+         filename =  basename(decomposed_url.path)
+         #replace _, because urlretriever doesn't work with _
+         filename = filename.replace('_','')
+         #creating a full filename including path to use subfolders
+         full_filename = os.path.join(path,filename)
+      else:
+         #replace _, because urlretriever doesn't work with _
+         name = full_filename.replace('_','') 
+          #creating a full filename including path to use subfolders
+         full_filename = os.path.join(path,name)
+         
       #file extraction   
       #exception if the transfer doesn't work
       #the handling of the error type is in the main routine
       try:
-         urllib.urlretrieve(url,filename)
+         #download file
+         urllib.urlretrieve(url,full_filename)
          
       except:
          self.error = 1
       
       #returning filenmame for further processing
-      return filename,self.error
+      return full_filename,self.error
       
       
    #function to extracts download links from homepag
@@ -59,7 +72,7 @@ class pyxlsDownloader(object):
    #  if there are download elements it extract the link 
    # it returns the links for a filedownload and the error value and the element number   
    def _getFilesFromPage(self,url):
-      list =[]
+      downloadLink =[]
       try:
           #crations a conection to a hompage
          html= urllib2.urlopen(url)   
@@ -72,7 +85,7 @@ class pyxlsDownloader(object):
          #creatoing a list element with all download links
          for index,link in enumerate(load_profil,start =1): 
             #creating an url entry 
-            list.append([str(index),parse_object.scheme+'://'+
+            downloadLink.append([str(index),parse_object.scheme+'://'+
                 parse_object.netloc+link['href']]) 
             
          if index == 0:
@@ -80,4 +93,4 @@ class pyxlsDownloader(object):
             self.error = 3 
       except:
          self.error = 2 
-      return list,index, self.error
+      return downloadLink,index, self.error
