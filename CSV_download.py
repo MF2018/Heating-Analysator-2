@@ -4,7 +4,14 @@ Created on Tue Jan 16 21:19:00 2018
 
 @author: Max
 """
-"""This project helps to collect customer load profils of heating sytems in Germany and analyses it."""
+"""This class looks for downloadable elements on a page and downloads it.
+It has two methods:
+1) getFilefromPage srapes a page for download elements 
+2) Dowloader downloads the element
+
+It has one global variable error which reinitialyses at every call with 0 
+Every errorvalue except 0 means an error
+"""
 
 import urllib
 import time
@@ -26,7 +33,8 @@ class pyxlsDownloader(object):
       self.error = 0
       
    #function to download a csv-file
-   #  an url and a filename are transfered to the function and the function adds a timestamp 
+   #  an url and a filename are transfered to the function and the function adds a timestamp and saves the file
+   #  it returns the filename including the path for further file-analysations and an error type
    def _Downloader(self,url,name):
     
       #timestamp to avoid data conflicts
@@ -46,7 +54,10 @@ class pyxlsDownloader(object):
       return filename,self.error
       
       
-   #extracts download links from homepage   
+   #function to extracts download links from homepag
+   #  an url is transfered to the function and it scrapes a page for download-elements
+   #  if there are download elements it extract the link 
+   # it returns the links for a filedownload and the error value and the element number   
    def _getFilesFromPage(self,url):
       list =[]
       try:
@@ -59,16 +70,14 @@ class pyxlsDownloader(object):
          #decompsoing link to geht the adress for the download link
          parse_object = urlparse.urlparse(url)
          #creatoing a list element with all download links
-         x = 1;
-         for i in load_profil: 
+         for index,link in enumerate(load_profil,start =1): 
             #creating an url entry 
-            list.append(['-'+str(x)+'-',parse_object.scheme+'://'+
-                parse_object.netloc+i['href']]) 
-            x = x+1
+            list.append([str(index),parse_object.scheme+'://'+
+                parse_object.netloc+link['href']]) 
             
-         if x == 0:
+         if index == 0:
             #no data error 
             self.error = 3 
       except:
          self.error = 2 
-      return list,x, self.error
+      return list,index, self.error
