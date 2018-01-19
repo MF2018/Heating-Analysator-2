@@ -49,9 +49,9 @@ class pyxlsDownloader(object):
          full_filename = os.path.join(path,filename)
       else:
          #replace _, because urlretriever doesn't work with _
-         name = full_filename.replace('_','') 
+         filename = name.replace('_','') 
           #creating a full filename including path to use subfolders
-         full_filename = os.path.join(path,name)
+         full_filename = os.path.join(path,filename)
          
       #file extraction   
       #exception if the transfer doesn't work

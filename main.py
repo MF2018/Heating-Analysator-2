@@ -17,10 +17,10 @@ import pandas as pd
 
 
 
+
 def main(argv):
-    
+    print pd.__version__
     #main- routine
-  
     #initialisation of the Downloader 
     Downloader= pyxlsDownloader()
     
@@ -53,6 +53,7 @@ def main(argv):
     
     
     # checking if the input a wrong datatype
+    page = ()
     try:
         x = int(x)
     
@@ -123,17 +124,19 @@ def main(argv):
             input_data,error = Analyser._read(returnvalue,'')
             
         #test werte
-        print input_data
-        a = input_data.describe()
+        #a = input_data.convert_objects(convert_numeric=True)
+        a=pd.to_numeric(input_data,errors='coerce')    
+        b,error = Analyser._removeOutliners(a)
+        if error == 0:   
+           b = a.describe()
+           x = raw_input( 'Insert filename: ')
+        else:
+           print 'Cannot remove outliners'
         
         # Create a Pandas Excel writer using XlsxWriter as the engine.
-        writer = pd.ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter')
-
-        # Convert the dataframe to an XlsxWriter Excel object.
-        a.to_excel(writer, sheet_name='Sheet1')
-
-        # Close the Pandas Excel writer and output the Excel file.
-        writer.save()
+        error = Analyser._saveExcel(x,a)
+        error = Analyser._saveExcel(x+'1',input_data)
+        error = Analyser._saveExcel(x+'2',b)
            
             
    
