@@ -125,18 +125,18 @@ def main(argv):
             
         #test werte
         #a = input_data.convert_objects(convert_numeric=True)
-        a=pd.to_numeric(input_data,errors='coerce')    
-        b,error = Analyser._removeOutliners(a)
+        """a =input_data.convert_objects(convert_numeric=True)
+        ###pandas 17 does not work
+        b,error = Analyser._removeOutliners(a)"""
         if error == 0:   
-           b = a.describe()
+           statistic_data = input_data.describe()
            x = raw_input( 'Insert filename: ')
         else:
            print 'Cannot remove outliners'
         
         # Create a Pandas Excel writer using XlsxWriter as the engine.
-        error = Analyser._saveExcel(x,a)
-        error = Analyser._saveExcel(x+'1',input_data)
-        error = Analyser._saveExcel(x+'2',b)
+        error = Analyser._saveExcel(x,input_data)
+        error = Analyser._addSheet(x,statistic_data,1)
            
             
    

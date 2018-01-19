@@ -89,7 +89,7 @@ class analyser(object):
    #  it returns an error type
    def _saveExcel(self,name,data):
        
-       try:
+       #try:
           writer = pd.ExcelWriter(name+'.xls', engine='xlsxwriter')
 
           # Convert the dataframe to an XlsxWriter Excel object.
@@ -97,7 +97,26 @@ class analyser(object):
 
           # Close the Pandas Excel writer and output the Excel file.
           writer.save()
+       #except:
+        #  self.error=1
+          
+          return self.error
+       
+   #function to save an Excel file 
+   #  a filename and the data and the sheet name is transfered to the function
+   #  it returns an error type
+   def _addSheet(self,name,data,sheet):
+       
+       try:
+          writer = pd.ExcelWriter(name+'.xls', engine='xlsxwriter')
+
+          # Convert the dataframe to an XlsxWriter Excel object.
+          data.to_excel(writer, sheet_name=sheet)
+
+          # Close the Pandas Excel writer and output the Excel file.
+          writer.save()
        except:
           self.error=1
           
        return self.error
+       
