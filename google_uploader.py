@@ -4,11 +4,8 @@ Created on Sat Jan 20 09:55:10 2018
 
 @author: Max
 """
-"""This class uploads a file to google and uses its api. It bases on the model 
+"""This class uploads a file to google drive and uses its API client to connect. It bases on the model 
  google_drive_util.py on github:https://gist.github.com/lheric/876a924c5d77bde0f62526c7fa6ad846
-
-It has one global variable error which reinitialyses at every call with 0 
-Every errorvalue except 0 means an error
 """
 
 #Global class for the xls-Downlader
@@ -44,8 +41,6 @@ class Google_login(object):
    def root_files(self):    
       file_list = drive.ListFile({'q': "'root' in parents and trashed=false"}).GetList()
       # Auto-iterate through all files in the root folder.
-      #for file1 in file_list:
-      #    print 'title: %s, id: %s' % (file1['title'], file1['id'])
       return file_list
 
 
