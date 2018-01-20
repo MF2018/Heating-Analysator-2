@@ -10,7 +10,7 @@ google_drive_util.py on github:https://gist.github.com/lheric/876a924c5d77bde0f6
 To use the API client the users has to generate 'client_secrets.json' from https://console.developers.google.com/ . 
 
 The code of the main function is only rudimental. In further steps a gui will be provided. 
-So, the user can enter a homepage of his wish and can choose more than von download link.
+So, the user can enter a homepage of his wish and can choose more than one download link.
 After that he can choose the columns for the data-analysis and which data he wants to plot.
 But this will be in a further step.
 
