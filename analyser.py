@@ -5,7 +5,7 @@ Created on Thu Jan 18 19:48:54 2018
 @author: Max
 """
 """This class analyses an excel-file.
-It has two methods:
+It has noch eingaben methods:
 1) read_file reads an excel-file 
 2) analyse analyses the document and plots the data
 
@@ -15,7 +15,10 @@ Every errorvalue except 0 means an error
 
 import pandas as pd
 from pathlib import Path
+from google_uploader import Google_login
 import numpy as np
+import scipy.stats as stats
+import pylab as pl
 
 #Global class for the analyser
 
@@ -67,22 +70,6 @@ class analyser(object):
               
        return sheets,self.error
        
-   #function to remove outliners an Excel file 
-   #  a filename and the data is transfered to the function
-   #  it returns a new data file without outliners and an error type
-   def _removeOutliners(self,data):
-       #try:
-          
-          mean = data.mean()
-          difference = data-mean
-          #keep only the ones that are within +3 to -3 standard deviations in the column 'Data'.
-          data = [(abso <3).all(axis=1)]
-          
-       #except:
-        #  self.error=1
-          
-          return data,self.error
-       
     
    #function to save an Excel file 
    #  a filename and the data is transfered to the function
@@ -93,30 +80,97 @@ class analyser(object):
           writer = pd.ExcelWriter(name+'.xls', engine='xlsxwriter')
 
           # Convert the dataframe to an XlsxWriter Excel object.
-          data.to_excel(writer, sheet_name='Sheet')
+          data.to_excel(writer,sheet_name='Sheet')
 
-          # Close the Pandas Excel writer and output the Excel file.
-          writer.save()
+          
        #except:
         #  self.error=1
           
-          return self.error
+          return writer,self.error
        
    #function to save an Excel file 
-   #  a filename and the data and the sheet name is transfered to the function
+   #  an excel image and the sheet name is transfered to the function
    #  it returns an error type
-   def _addSheet(self,name,data,sheet):
+   def _addSheet(self,writer,data,sheet):
        
        try:
-          writer = pd.ExcelWriter(name+'.xls', engine='xlsxwriter')
 
           # Convert the dataframe to an XlsxWriter Excel object.
           data.to_excel(writer, sheet_name=sheet)
 
-          # Close the Pandas Excel writer and output the Excel file.
-          writer.save()
+          
+         
        except:
           self.error=1
           
-       return self.error
+       return writer,self.error
+
+   #function to analyse the date. It calls supfunction for that
+   #  a data-file
+   #  it returns an error type
+   def _analyse(self,input_data,filename,col):
+       try:
+          #test werte
+          input_data = input_data.convert_objects(convert_numeric=True)
+        
+          ###pandas 17 does not work. Upgrade failed. So it will be done later
+          """ b,error = Analyser._removeOutliners(a)"""
+         
+          statistic_data = input_data.describe()
        
+     
+          # Create a Pandas Excel writer using XlsxWriter as the engine.
+          # It is possbible that the asci transformation of xlswriterfails
+          # So a asci transformation will be added in a further step    
+          writer,error = self._saveExcel(filename,input_data)
+          writer,error = self._addSheet(writer,statistic_data,'1')
+          error = self._plotData(input_data,col,writer)
+          writer.save()
+          self.error = error
+          if error ==0:
+             error = self.googleupload(filename) 
+             self.error = error
+         
+       except:
+          self.error=1
+         
+       return self.error       
+       
+
+   #function a plot to an 
+   #  the data-file and the column to plot is transfered to the function
+   #  it returns an error type
+   def _plotData(self,data,col,writer):
+       try:
+          data[col].plot()
+          #In a further step the plot shall be saved in the xls-file
+          
+          # Access the XlsxWriter workbook and worksheet objects from the dataframe.
+          workbook  = writer.book
+          worksheet = writer.sheets['Sheet']             
+           
+          # Create a chart object.
+          chart = workbook.add_chart({'type': 'line'})
+          
+          chart.add_series({
+            'values':     ['Sheet',1,col,data.shape[0] ,col],
+             })
+          
+          # Insert the chart into the worksheet.
+          worksheet.insert_chart('G2', chart)
+          
+       except:
+          self.error=1
+          
+       return self.error       
+    
+   #function to upload all xls files in this folder
+   # the file_name is transfered to the function
+   def googleupload(self,file_name):
+       try:
+          Uploader = Google_login() 
+          new_folder = Uploader.create_subfolder(None,file_name)
+          Uploader.upload_files_to_folder(Uploader.list_files_with_ext('.xls')[:3],new_folder)
+       except:
+           self.errror = 2
+       return self.error

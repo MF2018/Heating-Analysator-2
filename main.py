@@ -13,13 +13,13 @@ from CSV_download import pyxlsDownloader
 import os
 import sys
 from analyser import analyser
-import pandas as pd
+
 
 
 
 
 def main(argv):
-    print pd.__version__
+    
     #main- routine
     #initialisation of the Downloader 
     Downloader= pyxlsDownloader()
@@ -88,7 +88,6 @@ def main(argv):
     
         #input_data,error = Analyser._read(returnvalue)      
         sheets,error = Analyser._getSheet(returnvalue)
-        print sheets 
         
         
         
@@ -123,22 +122,18 @@ def main(argv):
         else:
             input_data,error = Analyser._read(returnvalue,'')
             
-        #test werte
-        #a = input_data.convert_objects(convert_numeric=True)
-        """a =input_data.convert_objects(convert_numeric=True)
-        ###pandas 17 does not work
-        b,error = Analyser._removeOutliners(a)"""
-        if error == 0:   
-           statistic_data = input_data.describe()
-           x = raw_input( 'Insert filename: ')
-        else:
-           print 'Cannot remove outliners'
         
-        # Create a Pandas Excel writer using XlsxWriter as the engine.
-        error = Analyser._saveExcel(x,input_data)
-        error = Analyser._addSheet(x,statistic_data,1)
-           
-            
+        #analysation of the data and upload data to google 
+        if error ==0:
+           x = raw_input( 'Insert filename: ')
+           col =2
+           error = Analyser._analyse(input_data,x,col)
+           if error ==1:
+              print "Analysation failed"
+           elif error ==2:
+               print "failed to upload file"
+                
+        
    
 if __name__ == "__main__":
     main(sys.argv)
