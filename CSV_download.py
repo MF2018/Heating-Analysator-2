@@ -6,11 +6,11 @@ Created on Tue Jan 16 21:19:00 2018
 """
 """This class looks for downloadable elements on a page and downloads it.
 It has two methods:
-1) getFilefromPage srapes a page for download elements 
-2) Dowloader downloads the element
+1) getFilefromPage scrapes a page for download elements 
+2) Downloader downloads the element
 
-It has one global variable error which reinitialyses at every call with 0 
-Every errorvalue except 0 means an error
+It has one global variable error which reinitializes at every call with 0. 
+Every error value except 0 means an error
 """
 
 import urllib
@@ -22,35 +22,35 @@ from bs4 import BeautifulSoup
 
 
 
-#Global class for the xls-Downlader
+#Global class for the xls-Downloader
 
 class pyxlsDownloader(object):
         
-    #init function with class constants as constructor
+    #init function with class constants
    def __init__(self):
-      #initialising error-variable with default value
+      #initializing error-variable with default value
       self.error = 0
       
    #function to download a csv-file
-   #  an url and a filename are transfered to the function
+   #  an url and a filename are transferred to the function
    #  it returns the filename including the path for further file-analysations and an error type
    def _Downloader(self,url,path,name):
     
       
-      #if no filename is transfered, the filename of the url is used
+      #if no filename is transferred, the filename of the url is used
       if name =='':
          #decompsing url for filename
          decomposed_url = urlparse.urlparse(url) 
-         #extractin filename
+         #extracting filename
          filename =  basename(decomposed_url.path)
-         #replace _, because urlretriever doesn't work with _
+         #replace '_' , because urlretriever doesn't work with _
          filename = filename.replace('_','')
-         #creating a full filename including path to use subfolders
+         #creating a full filename including the path to use subfolders
          full_filename = os.path.join(path,filename)
       else:
          #replace _, because urlretriever doesn't work with _
          filename = name.replace('_','') 
-          #creating a full filename including path to use subfolders
+          #creating a full filename including the path to use subfolders
          full_filename = os.path.join(path,filename)
          
       #file extraction   
@@ -67,24 +67,24 @@ class pyxlsDownloader(object):
       return full_filename,self.error
       
       
-   #function to extracts download links from homepag
-   #  an url is transfered to the function and it scrapes a page for download-elements
-   #  if there are download elements it extract the link 
-   # it returns the links for a filedownload and the error value and the element number   
+   #function to extract the download links from homepage
+   #  an url is transferred to the function and it scrapes the page for download-elements
+   #  if there are download elements it extracts the links 
+   # it returns the links for a file download and the error value and the numbers of elements  
    def _getFilesFromPage(self,url):
       downloadLink =[]
       try:
-          #crations a conection to a hompage
+          #creation of a connection to a homepage
          html= urllib2.urlopen(url)   
          #extracts the html code of a page
          soup = BeautifulSoup(html.read().decode("iso-8859-1"))
          load_profil = soup.find_all('a', attrs={'class', 'download'})
          
-         #decompsoing link to geht the adress for the download link
+         #decomposing the link to get the address for the download link
          parse_object = urlparse.urlparse(url)
-         #creatoing a list element with all download links
+         #creating a list element with all download links
          for index,link in enumerate(load_profil,start =1): 
-            #creating an url entry 
+            #creating an url for the download
             downloadLink.append([str(index),parse_object.scheme+'://'+
                 parse_object.netloc+link['href']]) 
             
