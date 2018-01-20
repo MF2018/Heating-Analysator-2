@@ -12,5 +12,5 @@ To use the API client the users has to generate 'client_secrets.json' from https
 The code of the main function is only rudimental. In further steps a gui will be provided. 
 So, the user can enter a homepage of his wish and can choose more than von download link.
 After that he can choose the columns for the data-analysis and which data he wants to plot.
-But this will be in a further step
+But this will be in a further step.
 
