@@ -13,7 +13,7 @@ google_drive_util.py on github:https://gist.github.com/lheric/876a924c5d77bde0f6
 To use the API client the users has to generate 'client_secrets.json' from https://console.developers.google.com/ . 
 
 The code of the main function is only rudimental. In further step a gui will be provided. 
-So, the user can enter a homepage of his wish and can choose more then von download link.
+So, the user can enter a homepage of his wish and can choose more then one download link.
 After that he can choose the columns for the data-analysis and which data he wants to plot.
 But this will be in a further step
 """
@@ -28,7 +28,7 @@ from analyser import analyser
 
 def main(argv):
     
-    #main- routine
+    #main-routine
     #initialisation of the Downloader 
     Downloader= pyxlsDownloader()
     
@@ -40,11 +40,10 @@ def main(argv):
     directory = os.getcwd()
     #path for the output-folder
     path = directory + "\load_profils"
-    #name of the output file
-    #when the gui is finished, it is possible to define the name
+    #initialisation of the name of the output file
     name = ""
     
-    #get the download links from an homepage
+    #get the download links from a homepage;In a further step the link can be set in a gui
     links,count,error = Downloader._getFilesFromPage('https://www.ednetze.de/kunde/lieferanten/lastprofile-temperaturtabellen/')
     
     # print the links for the user
@@ -53,23 +52,24 @@ def main(argv):
         print i
     print
     
-    #the user can choooses a link for the next steps 
+    #the user can chooses a link for the next steps 
+    #in a further step the user can select more than one link(checkboxes)
     x = raw_input('Select a number  :')
     
-    #loop um eingabe fehlt noch
+    #up to now, there is no loop until the user decides to leaf. This will be provided with a gui in a further step.
     
     
     
-    # checking if the input a wrong datatype
+    # checking if the input is of the wrong datatype
     page = ()
     try:
         x = int(x)
     
         if x<1 or x>= count:
-           print 'Ungültige Eingabe, bitte geben Sie eine andere Zahl ein'
+           print 'Wrong number. Please try a different one.'
            error = 1
         else:
-             #link of the homepage wich provides the data
+             #select download link
            page = links[x-1][1] 
     except:
         print 'Wrong type'
@@ -77,11 +77,11 @@ def main(argv):
         
 
      
-    #call of the file Downloader  if no error happens before
+    #call of the file-downloader, if no error happens before.
     if error == 0:
        returnvalue,error = Downloader._Downloader(page,path,name)
 
-       #handling of the returned values
+       #handling of the returned file
        if error==1:
        #error handling
           print "It is not possible to load the file."
@@ -90,16 +90,13 @@ def main(argv):
        elif error == 3:
           print "No useable data" 
     
-     #if succesfull print filename
     if error==0:
-        #read the sheets name
-    
-        #input_data,error = Analyser._read(returnvalue)      
+        #read the sheets name    
         sheets,error = Analyser._getSheet(returnvalue)
         
         
         
-        #handling of the returned values
+        #handling of the returned sheets
         if error==1:
         #error handling
            print "Can't read file."
@@ -112,15 +109,16 @@ def main(argv):
               print '-'+str(index)+'- ' + sheet
            print
     
-           #the user can choooses a sheet for the next steps 
+           #the user can chooses a sheet for the next steps 
            x = raw_input('Select a number  :')  
            try:
               x = int(x)
     
               if x<1 or x> index:
-                 print 'Ungültige Eingabe, bitte geben Sie eine andere Zahl ein'
+                 print 'Wrong number. Please try a different one.'
                  error = 1
               else:
+                 #read the file and transfer the data to a data frame 
                  input_data,error = Analyser._read(returnvalue,sheets[x-1])
           
            except:
@@ -128,6 +126,8 @@ def main(argv):
               error ==1
               
         else:
+            #if the file is a csv-file it has no sheets
+            #read the file and transfer the data to a data frame
             input_data,error = Analyser._read(returnvalue,'')
             
         
