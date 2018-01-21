@@ -15,7 +15,7 @@ Analysator
 This project helps to collect load profiles of heating systems in Germany and analyses it. 
 It is developed with Python 2.7 using Python(x,y) 2.7.10.0
 
-This main function uses pyxlsDownloader to search for Download-elements of a homepage. 
+This main function uses Downloader to search for download-elements of a homepage. 
 Then it scrapes for downlinks in a second step. After it, it downloads the link chossed.
 In a third step it uses the Analyser to analyse the Data and plot a part of the data.
 After thatp the Analyser uploads the data to doogle Drive using an API client. The google upload bases on the module of
@@ -28,7 +28,7 @@ After that he can choose the columns for the data-analysis and which data he wan
 He can edit the plot and save the edited plot.
 But this will be in a further step.
 """
-from CSV_download import pyxlsDownloader 
+from downloader import downloader 
 import os
 import sys
 from analyser import analyser
@@ -41,7 +41,7 @@ def main(argv):
     
     #main-routine
     #initialisation of the Downloader 
-    Downloader= pyxlsDownloader()
+    Downloader= downloader()
     
     #initialisation of the Analyser
     Analyser = analyser()
@@ -49,25 +49,27 @@ def main(argv):
     #building a file name
     #path of the current project
     directory = os.getcwd()
-    #path for the output-folder
+    #path for the output-folder. In a further step the user can set the folder in a GUI.
     path = directory + "\load_profils"
+    
     #initialisation of the name of the output file
     name = ""
     
-    #get the download links from a homepage;In a further step the link can be set in a gui
+    #get the download links from a homepage;In a further step the link can be set in a GUI
+    #furthermore the user can save the settings of links
     links,count,error = Downloader._getFilesFromPage('https://www.ednetze.de/kunde/lieferanten/lastprofile-temperaturtabellen/')
     
     # print the links for the user
-    print 'Choose the link of your choice'
+    print 'Select the link of your choice'
     for i in links:
         print i
     print
     
-    #the user can chooses a link for the next steps 
-    #in a further step the user can select more than one link(checkboxes)
+    #the user can select a link for the next steps 
+    #in a further step the user can select more than one link(checkboxes,excel file for cyclic analysations)
     x = raw_input('Select a number  :')
     
-    #up to now, there is no loop until the user decides to leaf. This will be provided with a gui in a further step.
+    #up to now, there is no loop until the user decides to exit. This will be provided with a GUI in a further step.
     
     
     
@@ -77,22 +79,22 @@ def main(argv):
         x = int(x)
     
         if x<1 or x>= count:
-           print 'Wrong number. Please try a different one.'
+           print 'Number out of range.'
            error = 1
         else:
-             #select download link
+             #selected download link
            page = links[x-1][1] 
     except:
-        print 'Wrong type'
+        print 'Wrong data type'
         error ==1
         
 
      
     #call of the file-downloader, if no error happens before.
     if error == 0:
-       returnvalue,error = Downloader._Downloader(page,path,name)
+       returnvalue,error = Downloader._downloadFiles(page,path,name)
 
-       #handling of the returned file
+       #handling of the recieved file
        if error==1:
        #error handling
           print "It is not possible to load the file."
@@ -102,7 +104,7 @@ def main(argv):
           print "No useable data" 
     
     if error==0:
-        #read the name of sheets of an excel file    
+        #read the name of the sheets of an excel file    
         sheets,error = Analyser._getSheet(returnvalue)
         
         
@@ -115,7 +117,7 @@ def main(argv):
         elif sheets != ():
            # chosse the sheet 
            # print the links for the user
-           print 'Choose the link of your choice'
+           print 'Select the sheet of your choice'
            for index,sheet in enumerate(sheets,start =1):
               print '-'+str(index)+'- ' + sheet
            print
@@ -126,7 +128,7 @@ def main(argv):
               x = int(x)
     
               if x<1 or x> index:
-                 print 'Wrong number. Please try a different one.'
+                 print 'Number out of range.'
                  error = 1
               else:
                  #read the file and transfer the data to a data frame 

@@ -79,7 +79,7 @@ class analyser(object):
    #  a filename and the data are transferred to the function
    #  it returns an error type
    def _saveExcel(self,name,data):
-       
+       #in a further step the path to save the file can be selected
        try:
           writer = pd.ExcelWriter(name+'.xls', engine='xlsxwriter')
 
@@ -126,7 +126,7 @@ class analyser(object):
           statistic_data = input_data.describe()
        
      
-          # It is possible, that the excel erport fails due to an type error.
+          # It is possible, that the excel export fails due to an type error.
           # Some csv are written in utf-8 and a transformation of the XLsxWriter 
           # was not possible. 
           # An asci transformation will be added in a further step.

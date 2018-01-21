@@ -78,6 +78,7 @@ class downloader(object):
          html= urllib2.urlopen(url)   
          #extracts the html code of a page
          soup = BeautifulSoup(html.read().decode("iso-8859-1"))
+         #scanning for download elements
          load_profil = soup.find_all('a', attrs={'class', 'download'})
          
          #decomposing the link to get the address for the download link
