@@ -7,7 +7,7 @@ Created on Thu Jan 18 19:48:54 2018
 """This class analyses an excel-file.
 It has 7 methods:
 1) read reads an excel-file. 
-2) getSheets selects one sheet of an excel file.
+2) getSheets returns all sheets of an excel file.
 3) saveExcel writes the analysed data in an excel file.
 4) addSheet adds a sheet to an existing excel file.
 5) analyse analyses the document, plots the data, save it and uploads the file to google drive.
@@ -30,7 +30,7 @@ class analyser(object):
         
     #init function with class constants
    def __init__(self):
-      #initialising error-variable with default value
+      #initializing error-variable with default value
       self.error = 0
       
       
@@ -63,7 +63,7 @@ class analyser(object):
    def _getSheet(self,files):
        sheets =()
        try:
-          #reading the sheetsname if they are an xls file
+          #reading the sheetnames if they are an xls file
           
           if 'xls' in Path(files).suffix: 
              sheet = pd.ExcelFile(files) 
@@ -115,7 +115,7 @@ class analyser(object):
 
    def _analyse(self,input_data,filename,col):
        try:
-          #convertsvalues to a numeric value
+          #convert values to a numeric value
           input_data = input_data.convert_objects(convert_numeric=True)
         
           #it was not possible to upgrade to pandas 0.17.0. 
@@ -126,7 +126,9 @@ class analyser(object):
           statistic_data = input_data.describe()
        
      
-          # It is possible  that the asci transformation of xlswriterfails
+          # It is possible, that the excel erport fails due to an type error.
+          # Some csv are written in utf-8 and a transformation of the XLsxWriter 
+          # was not possible. 
           # An asci transformation will be added in a further step.
      
           # Creates an Excel writer using XlsxWriter as the engine.
@@ -138,7 +140,7 @@ class analyser(object):
           self.error = error
           if error ==0:
              #uploads the excel document 
-             error = self.googleupload(filename) 
+             error = self.googleUpload(filename) 
              self.error = error
          
        except:
@@ -149,7 +151,7 @@ class analyser(object):
 
    #function to plot a data column 
    #  the data file and the column to plot and a writer image to save it to excel 
-   # is transferred to the function.
+   #  are transferred to the function.
    #  it returns an error type.
    def _plotData(self,data,col,writer):
        try:
@@ -179,7 +181,7 @@ class analyser(object):
    #function to upload all xls files in this folder to google drive
    # the file_name is transferred to the function.
    #  it returns an error type.
-   def googleupload(self,file_name):
+   def googleUpload(self,file_name):
        try:
           #creating an authorized google access            
           Uploader = Google_login() 
