@@ -1,6 +1,7 @@
 # Analysator
 This project helps to collect load profiles of heating energy systems in Germany and analyse them. 
 It is developed with Python 2.7 using Python(x,y) 2.7.10.0.
+This application requires a google account including google drive. 
 
 
 The main function use the function downloader to search for downloadable elements of a homepage. 
