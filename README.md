@@ -1,4 +1,4 @@
-# Heating-Analysation
+# Analysator
 This project helps to collect load profiles of heating systems in Germany and analyses it. 
 
 
