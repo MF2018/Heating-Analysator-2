@@ -1,9 +1,10 @@
 # Analysator
 This project helps to collect load profiles of heating systems in Germany and analyses it. 
-It is developed with Python 2.7 using Python(x,y) 2.7.10.0
+It is developed with Python 2.7 using Python(x,y) 2.7.10.0.
+To use the 
 
 
-The main function uses pyxlsDownloader to search for Download-elements of a homepage. 
+The main function uses Downloader to search for download-elements of a homepage. 
 Then it scrapes for downlinks in a second step. After it, it downloads the link chossed.
 In a third step it uses the Analyser to analyse the Data and plots a part of the data.
 After that the Analyser uploads the data to google Drive using an API client. The google upload bases on the module of
