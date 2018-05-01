@@ -68,7 +68,7 @@ class analyser(object):
           if 'xls' in Path(files).suffix: 
              sheet = pd.ExcelFile(files) 
              sheets = sheet.sheet_names
-             print sheets
+             print(sheets)
        except:
           self.error = 1
               

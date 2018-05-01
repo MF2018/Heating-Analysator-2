@@ -60,14 +60,14 @@ def main(argv):
     links,count,error = Downloader._getFilesFromPage('https://www.ednetze.de/kunde/lieferanten/lastprofile-temperaturtabellen/')
     
     # print the links for the user
-    print 'Select the link of your choice'
+    print("Select the link of your choice")
     for i in links:
-        print i
+        print(i)
     print
     
     #the user can select a link for the next steps 
     #in a further step the user can select more than one link(checkboxes,excel file for cyclic analysations)
-    x = raw_input('Select a number  :')
+    x = input('Select a number  :')
     
     #up to now, there is no loop until the user decides to exit. This will be provided with a GUI in a further step.
     
@@ -79,13 +79,13 @@ def main(argv):
         x = int(x)
     
         if x<1 or x>= count:
-           print 'Number out of range.'
+           print ("Number out of range.")
            error = 1
         else:
              #selected download link
            page = links[x-1][1] 
     except:
-        print 'Wrong data type'
+        print("Wrong data type")
         error ==1
         
 
@@ -97,11 +97,11 @@ def main(argv):
        #handling of the recieved file
        if error==1:
        #error handling
-          print "It is not possible to load the file."
+          print("It is not possible to load the file.")
        elif error == 2:
-          print "Can't reach the homepage"
+          print("Can't reach the homepage")
        elif error == 3:
-          print "No useable data" 
+          print("No useable data") 
     
     if error==0:
         #read the name of the sheets of an excel file    
@@ -112,30 +112,30 @@ def main(argv):
         #handling of the returned sheets
         if error==1:
         #error handling
-           print "Can't read file."
+           print("Can't read file.")
            
         elif sheets != ():
            # chosse the sheet 
            # print the links for the user
-           print 'Select the sheet of your choice'
+           print("Select the sheet of your choice")
            for index,sheet in enumerate(sheets,start =1):
-              print '-'+str(index)+'- ' + sheet
+              print('-'+str(index)+'- ' + sheet)
            print
     
            #the user can chooses a sheet for the next steps 
-           x = raw_input('Select a number  :')  
+           x = input('Select a number  :')  
            try:
               x = int(x)
     
               if x<1 or x> index:
-                 print 'Number out of range.'
+                 print("Number out of range.")
                  error = 1
               else:
                  #read the file and transfer the data to a data frame 
                  input_data,error = Analyser._read(returnvalue,sheets[x-1])
           
            except:
-              print 'Wrong type'
+              print("Wrong type")
               error ==1
               
         else:
@@ -146,13 +146,13 @@ def main(argv):
         
         #analysation of the data and upload data to google 
         if error ==0:
-           x = raw_input( 'Insert filename: ')
+           x = input("Insert filename: ")
            col =2
            error = Analyser._analyse(input_data,x,col)
            if error ==1:
-              print "Analysation failed"
+              print("Analysation failed")
            elif error ==2:
-               print "failed to upload file"
+               print("failed to upload file")
                 
         
    

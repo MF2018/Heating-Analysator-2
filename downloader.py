@@ -14,9 +14,8 @@ Every error value except 0 means an error
 """
 
 import urllib
-import urllib2
 import os
-import urlparse
+import ssl
 from posixpath import basename
 from bs4 import BeautifulSoup 
 
@@ -30,7 +29,6 @@ class downloader(object):
    def __init__(self):
       #initializing error-variable with default value
       self.error = 0
-      
    #function to download a file
    #  an url and a filename are transferred to the function
    #  it returns the filename including the path for further file-analysations and an error type
@@ -40,7 +38,7 @@ class downloader(object):
       #if no filename is transferred, the filename of the url is used
       if name =='':
          #decompsing url for filename
-         decomposed_url = urlparse.urlparse(url) 
+         decomposed_url = urllib.request.urlparse(url) 
          #extracting filename
          filename =  basename(decomposed_url.path)
          #replace '_' , because urlretriever doesn't work with _
@@ -58,7 +56,7 @@ class downloader(object):
       #the handling of the error type is in the main routine
       try:
          #download file
-         urllib.urlretrieve(url,full_filename)
+         urllib.request.urlretrieve(url,full_filename)
          
       except:
          self.error = 1
@@ -75,14 +73,15 @@ class downloader(object):
       downloadLink =[]
       try:
           #creation of a connection to a homepage
-         html= urllib2.urlopen(url)   
+         ssl._create_default_https_context = ssl._create_unverified_context
+         html = urllib.request.urlopen(url).read()   
          #extracts the html code of a page
-         soup = BeautifulSoup(html.read().decode("iso-8859-1"))
+         soup = BeautifulSoup(html.decode("iso-8859-1"))
          #scanning for download elements
          load_profil = soup.find_all('a', attrs={'class', 'download'})
          
          #decomposing the link to get the address for the download link
-         parse_object = urlparse.urlparse(url)
+         parse_object = urllib.request.urlparse(url)
          #creating a list element with all download links
          for index,link in enumerate(load_profil,start =1): 
             #creating an url for the download
@@ -94,4 +93,5 @@ class downloader(object):
             self.error = 3 
       except:
          self.error = 2 
-      return downloadLink,index, self.error
+         index = 0;
+      return downloadLink,index,self.error
